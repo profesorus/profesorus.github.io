@@ -1,0 +1,36 @@
+---
+// Logic for image and title based on language
+
+const currentLang = Astro.url.pathname.startsWith('/de') ? 'de' : 'pl';
+const profTitle = currentLang === 'de'
+  ? 'Prof. Dr. Karol Sauerland'
+  : 'Prof. dr hab. Karol Sauerland';
+
+const images = [
+  'bydg.doc.png',
+  'SAUERLAND_6525677_255x255px.png',
+  'SAUERLAND_H5M2904_255x400px.png',
+  'SAUERLAND_H5M3011_255x300px.png',
+  'SAUERLAND_pwm_255x340px.png'
+];
+const image = images[Math.floor(Math.random() * images.length)];
+
+// import { getCurrentLocale } from 'astro:i18n';
+// const lang = getCurrentLocale();
+// astro.debug("Props Post:", lang);
+---
+<div id="menu">
+  <div id="logo">
+    <a id="logo_a" href={`/${currentLang === 'de' ? 'de' : ''}`}>
+      <img id="img_logo" class="menu" src={`/img/${image}`} alt="Logo" />
+    </a>
+  </div>
+  <h1 class="menu">{profTitle}</h1>
+  <slot /> {/* This slot will be for the Navigation component */}
+</div>
+
+<!-- <header>
+  {lang === 'pl' ? 'Witaj' : 'Welcome'}
+  <img src="/images/logo.png" />
+</header>
+ -->

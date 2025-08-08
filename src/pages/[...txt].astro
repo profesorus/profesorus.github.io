@@ -1,0 +1,136 @@
+---
+// src/pages/[...txt].astro
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getRelativeLocaleUrl as grl } from 'astro:i18n';
+import { renderMarkdown } from '../_utils/markdown.js'; // <-- IMPORTUJEMY
+
+//: EXPORT
+//: --------------------------------------------------------
+export async function getStaticPaths() {
+  const txtPages = await getCollection('txt');
+
+  const pagePaths = await Promise.all(
+      txtPages.map(async (page) => {
+      const slug = page.slug.replace(/^\/|\/$/g, '');
+      // const { Content } = await page.render(); // <-- JUŻ NIEPOTRZEBNE
+
+      return [
+        // Wersja polska (/txt/...)
+        {
+          params: { txt: `txt${slug ? `/${slug}` : ''}` },
+          props: {
+            pageData: page.data,
+            body: page.body, // <-- PRZEKAZUJEMY SUROWĄ TREŚĆ
+            lang: 'pl',
+            isHome: !slug,
+            currentSlug: slug
+          }
+        },
+        // Wersja niemiecka (/de/txt/...)
+        {
+          params: { txt: `de/txt${slug ? `/${slug}` : ''}` },
+          props: {
+            pageData: page.data,
+            body: page.body, // <-- PRZEKAZUJEMY SUROWĄ TREŚĆ
+            lang: 'de',
+            isHome: !slug,
+            currentSlug: slug
+          }
+        }
+      ];
+    })
+  );
+
+  // Spłaszczamy tablicę i dodajemy strony główne
+  return [
+    ...pagePaths.flat(),
+    // Strona główna PL (/txt/)
+    {
+      params: { txt: 'txt' },
+      props: {
+        isHome: true,
+        lang: 'pl',
+        currentSlug: ''
+      }
+    },
+    // Strona główna DE (/de/txt/)
+    {
+      params: { txt: 'de/txt' },
+      props: {
+        isHome: true,
+        lang: 'de',
+        currentSlug: ''
+      }
+    }
+  ];
+}
+
+const { pageData, body, isHome, lang, currentSlug } = Astro.props;
+const processedContent = body ? await renderMarkdown(body, lang) : ''; // <-- PRZETWARZAMY
+
+//: LOCAL
+//: --------------------------------------------------------
+const txtPages = (await getCollection('txt'))
+  .filter(post => post.slug.startsWith('0'));
+
+// const postData = {
+//   "000": {
+//     pl: "Ja, Inni oraz Pomiędzy",
+//     de: "Das Ich und die Anderen und das Dazwischen",
+//   },
+//   "001": {
+//     pl: "Destrukcja. Rzecz o Walterze Benjaminie",
+//     de: "Destrukcja. Rzecz o Walterze Benjaminie",
+//   },
+// };
+// txtPages.map((post, key) => {
+//   post._title = postData[post.slug][lang];
+// });
+
+---
+{/* ------------------------------------------------------------------------ */}
+<Layout language={lang}>
+
+  <!-- 🛍 TXT 🌀 [...TXT].astro -->
+
+  <hr>
+  <nav aria-label="Nawigacja językowa">
+    <span style="margin:0 10px 0 0;">🛍</span>
+    <a href={grl('pl', isHome ? '/txt/' : `/txt/${currentSlug}`).replace(/\/$/g, '')}
+      class={lang === 'pl' ? 'active' : ''}>PL
+    </a> |
+    <a href={grl('de', isHome ? '/txt/' : `/txt/${currentSlug}`).replace(/\/$/g, '')}
+      class={lang === 'de' ? 'active' : ''}>DE
+    </a>
+  </nav>
+  <hr>
+
+  <main>
+    {isHome ? (
+      <h1>{lang === 'pl' ? 'Teksty Zebrane (html)'
+                         : 'Ausgewählte Texte (html)'}</h1>
+      <hr>
+      <br>
+      <blockquote>
+      <ol>
+        {txtPages.map(post => {
+          // console.log('__pl', Object.entries(post)[1][1]);
+          // const name = post._title || post.data.title || post.id;
+          const name = post.data.subtitle?.[lang] || post.data.title;
+          const url = grl(lang ,`txt/${post.slug}`);
+          return <li><a href={url}>{name}</a>
+          {/*— [{post.slug}] <small>🌞</small> {post.id}*/}
+          </li>;
+        })}
+       </ol>
+      </blockquote>
+    ) : (
+      <>
+        {/*<h1>{pageData.title}</h1>*/}
+        <div set:html={processedContent} />
+      </>
+    )}
+  </main>
+
+</Layout>

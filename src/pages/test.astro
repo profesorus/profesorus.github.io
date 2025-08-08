@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getEntry, render } from 'astro:content';
+
+const entry = await getEntry('uni', 'kontakt');
+// const entry = await getEntry('txt', '000');
+// console.debug(entry.data)
+
+const { Content } = await render(entry);
+// const { Content } = await entry.render();
+---
+
+<Layout>
+
+  <h1>TEST</h1>
+
+  <!--Access frontmatter properties with `data`-->
+
+  <h2>{entry.data.title}</h2>
+  <hr>
+  <section>{entry.body}</section>
+  <hr>
+  <section set:html={entry.body} />
+  <hr>
+
+  <!--Render Markdoc contents with the Content component-->
+
+  <Content />
+
+</Layout>

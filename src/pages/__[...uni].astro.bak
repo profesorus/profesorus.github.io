@@ -1,0 +1,122 @@
+---
+// src/pages/[...uni].astro
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getRelativeLocaleUrl as grl } from 'astro:i18n';
+// import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export async function getStaticPaths() {
+  const uniPages = (await getCollection('uni'))
+    .filter(x => !x.slug.startsWith('__'));
+
+  const pagePaths = await Promise.all(
+    uniPages.map(async (page) => {
+      const slug = page.slug.replace(/^\/|\/$/g, '');
+      const { Content } = await page.render();
+
+      return [
+        // Wersja polska
+        {
+          params: { uni: slug || undefined },
+          props: {
+            pageData: page.data,
+            Content,
+            lang: 'pl',
+            isHome: !slug,
+            currentSlug: slug
+          }
+        },
+        // Wersja niemiecka
+        {
+          params: { uni: `de${slug ? `/${slug}` : ''}` },
+          props: {
+            pageData: page.data,
+            Content,
+            lang: 'de',
+            isHome: !slug,
+            currentSlug: slug
+          }
+        }
+      ];
+    })
+  );
+
+  return pagePaths.flat();
+
+  //: no need... /de/ is @ [...dir]
+  // Spłaszczamy tablicę i dodajemy strony główne
+  // return [
+  //   ...pagePaths.flat(),
+  //   // Strona główna PL
+  //   {
+  //     params: { uni: undefined },
+  //     props: {
+  //       isHome: true,
+  //       lang: 'pl',
+  //       currentSlug: ''
+  //     }
+  //   },
+  //   // Strona główna DE
+  //   {
+  //     params: { uni: 'de' },
+  //     props: {
+  //       isHome: true,
+  //       lang: 'de',
+  //       currentSlug: ''
+  //     }
+  //   }
+  // ];
+}
+
+const { pageData, Content, isHome, lang, currentSlug } = Astro.props;
+---
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- <Layout title={pageData.title} language={lang}> -->
+<Layout language={lang}>
+
+  <!-- 🦄 UNI 🌀 [...UNI].astro -->
+
+  <hr>
+  <nav aria-label="Nawigacja językowa">
+    <span style="margin:0 10px 0 0;">🦄</span>
+    <!-- <a href={grl(lang, isHome ? '/' : `/${currentSlug}`)}>
+      {isHome ? (lang === 'pl' ? 'Home' : 'Startseite') : pageData.title}
+    </a> | -->
+    <a href={grl('pl', isHome ? '/' : `/${currentSlug}`).replace(/\/$/g, '')}
+      class={lang === 'pl' ? 'active' : ''}>PL
+    </a> |
+    <a href={grl('de', isHome ? '/' : `/${currentSlug}`).replace(/\/$/g, '')}
+      class={lang === 'de' ? 'active' : ''}>DE
+    </a>
+  </nav>
+  <hr>
+
+  <main>
+    {isHome ? (
+      <h1>{lang === 'pl' ? 'Witamy w Uni' : 'Willkommen bei Uni'}</h1>
+    ) : (
+      <>
+        {/*<h1>{pageData.title}</h1>*/}
+        <Content />
+      </>
+    )}
+  </main>
+
+</Layout>
+
+{/* ************************************************************************ */}
+<!-- <!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    {isHome
+      ? (lang === 'pl' ? 'Uni - Strona główna' : 'Uni - Startseite')
+      : pageData.title}
+  </title>
+</head>
+<body> -->
+<!-- </body>
+</html> -->
+{/* ************************************************************************ */}

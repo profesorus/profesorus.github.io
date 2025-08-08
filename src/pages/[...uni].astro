@@ -1,0 +1,78 @@
+---
+// src/pages/[...uni].astro
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getRelativeLocaleUrl as grl } from 'astro:i18n';
+import { renderMarkdown } from '../_utils/markdown.js'; // <-- IMPORTUJEMY
+
+export async function getStaticPaths() {
+  const uniPages = (await getCollection('uni'))
+    .filter(x => !x.slug.startsWith('__'));
+
+  const pagePaths = await Promise.all(
+    uniPages.map(async (page) => {
+      const slug = page.slug.replace(/^\/|\/$/g, '');
+      // const { Content } = await page.render(); // <-- JUŻ NIEPOTRZEBNE
+
+      return [
+        // Wersja polska
+        {
+          params: { uni: slug || undefined },
+          props: {
+            pageData: page.data,
+            body: page.body, // <-- PRZEKAZUJEMY SUROWĄ TREŚĆ
+            lang: 'pl',
+            isHome: !slug,
+            currentSlug: slug
+          }
+        },
+        // Wersja niemiecka
+        {
+          params: { uni: `de${slug ? `/${slug}` : ''}` },
+          props: {
+            pageData: page.data,
+            body: page.body, // <-- PRZEKAZUJEMY SUROWĄ TREŚĆ
+            lang: 'de',
+            isHome: !slug,
+            currentSlug: slug
+          }
+        }
+      ];
+    })
+  );
+
+  return pagePaths.flat();
+}
+
+const { pageData, body, isHome, lang, currentSlug } = Astro.props;
+const processedContent = body ? await renderMarkdown(body, lang) : ''; // <-- PRZETWARZAMY
+---
+{/* ------------------------------------------------------------------------ */}
+<Layout language={lang}>
+
+  <!-- 🦄 UNI 🌀 [...UNI].astro -->
+
+  <hr>
+  <nav aria-label="Nawigacja językowa">
+    <span style="margin:0 10px 0 0;">🦄</span>
+    <a href={grl('pl', isHome ? '/' : `/${currentSlug}`).replace(/\/$/g, '')}
+      class={lang === 'pl' ? 'active' : ''}>PL
+    </a> |
+    <a href={grl('de', isHome ? '/' : `/${currentSlug}`).replace(/\/$/g, '')}
+      class={lang === 'de' ? 'active' : ''}>DE
+    </a>
+  </nav>
+  <hr>
+
+  <main>
+    {isHome ? (
+      <h1>{lang === 'pl' ? 'Witamy w Uni' : 'Willkommen bei Uni'}</h1>
+    ) : (
+      <>
+        {/*<h1>{pageData.title}</h1>*/}
+        <div set:html={processedContent} />
+      </>
+    )}
+  </main>
+
+</Layout>

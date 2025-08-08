@@ -1,0 +1,91 @@
+---
+//: ==================================================================
+import Layout from '../../layouts/Layout.astro';
+//: ==================================================================
+// import { getCollection } from 'astro:content';
+/*
+{
+  id: '00.md',
+  data: { title: 'Prof. dr hab. Karol Sauerland', lang: 'pl' },
+  filePath: 'src/content/pl/00.md',
+  digest: 'd7556a9ec2dd59bc',
+  collection: 'pl',
+  slug: '00',
+  render: [Function: render]
+}
+*/
+// const plPosts = await getCollection('pl');
+// const dePosts = await getCollection('de');
+//: ==================================================================
+//: https://docs.astro.build/en/guides/routing/
+//: ==================================================================
+/*
+
+export function getStaticPaths() {
+  return [
+    { params: { dog: "clifford" }},
+    { params: { dog: "rover" }},
+    { params: { dog: "spot" }},
+  ];
+}
+const { dog } = Astro.params;
+
+=== ---
+<div>Good dog, {dog}!</div>
+
+*/
+//: ==================================================================
+//: REQUIRED: getStaticPaths() function is required for dynamic routes
+//: ==================================================================
+export async function getStaticPaths() {
+
+  const postModules = import.meta.glob('../../content/_+/*.md');
+
+  return await Promise.all(
+    Object.entries(postModules).map(async ([filePath, module]) => {
+      const post = await module();
+
+      //: /txt/uber.mich/
+      const _url = filePath
+            .replace('../../content', '')
+            .replace('.md', '/')
+            .replace('/index', '/'); // opcjonalnie dla plików index.md
+
+      //: [ '', 'txt', 'uber.mich', '' ] -> [ 'txt', 'uber.mich' ]
+      const parts = _url.split('/').filter(Boolean); //: no empty
+      const _lang = parts[0];
+      const _slug = parts[1];
+
+      return {
+        params: {
+          lang: post.frontmatter.lang || _lang,
+          slug: post.frontmatter.slug || _slug,
+        },
+        props: {
+          post
+        },
+      };
+    })
+  );
+}
+///////////////////////////////////
+// let xx = await __getStaticPaths();
+// let xx = await getStaticPaths();
+// console.log(xx)
+///////////////////////////////////
+//: ==================================================================
+const { post } = Astro.props;
+const { Content } = post;
+//: ==================================================================
+const title = "---";
+const description = "";
+const keywords = "";
+const lang = "pl";
+//: ==================================================================
+---
+<Layout title={title} description={description} keywords={keywords} lang={lang}>
+
+  _____+ 🦄 +_____ [SLUG].astro
+
+  <Content />
+</Layout>

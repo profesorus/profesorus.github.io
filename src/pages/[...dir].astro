@@ -1,0 +1,199 @@
+---
+// src/pages/[...dir].astro
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getRelativeLocaleUrl as grl } from 'astro:i18n';
+// import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export async function getStaticPaths() {
+  const [plPages, dePages] = await Promise.all([
+    getCollection('pl'),
+    getCollection('de')
+  ]);
+
+  const paths = [];
+  const contentMap = new Map();
+
+  // Przygotuj mapę zawartości
+  const prepareContent = async (page, lang) => {
+    if (!page) return null;
+    const { Content } = await page.render();
+    return {
+      Content,
+      data: page.data,
+      slug: page.slug.replace(/^\/|\/$/g, '')
+    };
+  };
+
+  // Stwórz pary tłumaczeń
+  for (const plPage of plPages) {
+    const dePage = dePages.find(p => p.id === plPage.id);
+    contentMap.set(plPage.slug, {
+      pl: await prepareContent(plPage, 'pl'),
+      de: await prepareContent(dePage, 'de')
+    });
+  }
+
+  // Dodaj strony DE bez tłumaczeń PL
+  for (const dePage of dePages) {
+    if (!contentMap.has(dePage.slug)) {
+      contentMap.set(dePage.slug, {
+        pl: null,
+        de: await prepareContent(dePage, 'de')
+      });
+    }
+  }
+
+  // Generuj ścieżki
+  for (const [slug, content] of contentMap) {
+    const cleanSlug = slug.replace(/^\/|\/$/g, '');
+
+    ['pl', 'de'].forEach(lang => {
+      const targetContent = content[lang] || content[lang === 'pl' ? 'de' : 'pl'];
+
+      if (targetContent) {
+        paths.push({
+          params: {
+            dir: lang === 'pl' ? `+/${cleanSlug}` : `de/+/${cleanSlug}`
+          },
+          props: {
+            requestedLang: lang,
+            contentToShow: targetContent,
+            isAlternate: !content[lang],
+            exists: true
+          }
+        });
+      }
+    });
+  }
+
+  // Strony główne
+  paths.push(
+    {
+      params: { dir: undefined },
+      props: { isHome: true, requestedLang: 'pl', exists: true }
+    },
+    {
+      params: { dir: 'de' },
+      props: { isHome: true, requestedLang: 'de', exists: true }
+    }
+  );
+
+  return paths;
+}
+
+const { requestedLang, contentToShow, isAlternate, isHome, exists } = Astro.props;
+const currentLang = contentToShow?.lang || requestedLang;
+
+// console.log(Astro.props);
+
+//: --------------------------------------------------------
+//: Home Page
+
+const home = requestedLang === 'de'
+  ? await import('../content/home/home.de.md')
+  : await import('../content/home/home.pl.md');
+
+const { title, description } = home.frontmatter;
+
+//: --------------------------------------------------------
+---
+{/* ------------------------------------------------------------------------ */}
+<style>
+.active { font-weight: bold; }
+.translation-notice {
+  background: #fff8e1;
+  padding: 1rem;
+  border-left: 4px solid #ffc107;
+  margin: 1rem 0;
+}
+</style>
+<style>
+.notice {
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+}
+.translation-notice {
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+}
+</style>
+{/* ------------------------------------------------------------------------ */}
+<!-- <Layout title={pageData.title} language={lang}> -->
+<Layout language={currentLang}>
+
+  <!-- 🔘 DIR 🌀 [...DIR].astro -->
+
+  <hr>
+  <nav aria-label="Nawigacja językowa">
+    <span style="margin:0 10px 0 0;">🔘</span>
+    <a href={grl(currentLang, '/')}>
+      <!-- {currentLang === 'pl' ? 'Home' : 'Startseite'} -->
+    </a>
+    <a href={grl('pl', isHome ? '/' : `+/${contentToShow?.slug || ''}`)}>
+      PL
+    </a> |
+    <a href={grl('de', isHome ? '/' : `+/${contentToShow?.slug || ''}`)}>
+      DE
+    </a>
+  </nav>
+  <hr>
+
+  <main>
+    {isHome ? (
+      <h1>{currentLang === 'pl' ? '🇵🇱 Witamy !!!' : '🇩🇪 Willkommen !!!'}</h1>
+      <>
+      <home.Content />
+      </>
+    ) : exists ? (
+      <>
+        {isAlternate && (
+          <div class="notice translation-notice">
+            {currentLang === 'pl'
+              ? 'Pokazujemy wersję niemiecką (strona polska nie istnieje)'
+              : 'Wir zeigen die polnische Version (deutsche Seite existiert nicht)'}
+          </div>
+        )}
+        {contentToShow && (
+          <>
+            {/*<h1>{contentToShow.data.title}</h1>*/}
+            <contentToShow.Content />
+          </>
+        )}
+      </>
+    ) : (
+      <h1>404 - {currentLang === 'pl' ? 'Strona nie istnieje' : 'Seite nicht gefunden'}</h1>
+    )}
+  </main>
+
+  <!--
+  <footer>
+    <p>{new Date().getFullYear()} ©
+    {currentLang === 'pl' ? 'Wszelkie prawa zastrzeżone' : 'Alle Rechte vorbehalten'}</p>
+  </footer>
+  -->
+
+</Layout>
+
+{/* ************************************************************************ */}
+<!-- <!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    {isHome
+      ? (lang === 'pl' ? 'Strona główna' : 'Startseite')
+      : pageData.title}
+  </title>
+</head>
+<body> -->
+<!--   <title>
+    {isHome
+      ? (lang === 'pl' ? 'Strona główna' : 'Startseite')
+      : pageData?.title || (lang === 'pl' ? 'Strona w tłumaczeniu' : 'Seite in Übersetzung')}
+  </title> -->
+<!-- </body>
+</html> -->
+{/* ************************************************************************ */}

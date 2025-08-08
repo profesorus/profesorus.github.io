@@ -1,0 +1,132 @@
+---
+// src/pages/todo.astro
+import { getCollection } from 'astro:content';
+
+// Pobieramy wszystkie strony w obu językach
+const [plPages, dePages] = await Promise.all([
+  getCollection('pl'),
+  getCollection('de')
+]);
+
+// Tworzymy mapę tłumaczeń
+const translationMap = new Map();
+
+// Dodajemy polskie strony
+plPages.forEach(page => {
+  translationMap.set(page.id, {
+    pl: page,
+    de: null // Tymczasowo ustawiamy na null
+  });
+});
+
+// Uzupełniamy niemieckie tłumaczenia
+dePages.forEach(page => {
+  if (translationMap.has(page.id)) {
+    translationMap.get(page.id).de = page;
+  } else {
+    translationMap.set(page.id, {
+      pl: null,
+      de: page
+    });
+  };
+});
+
+// Przygotowujemy listy brakujących tłumaczeń
+const missingTranslations = {
+  pl: [], // Strony dostępne tylko w DE (brak PL)
+  de: []  // Strony dostępne tylko w PL (brak DE)
+};
+
+for (const [id, translations] of translationMap) {
+  if (translations.pl && !translations.de) {
+    missingTranslations.de.push(translations.pl);
+  }
+  if (translations.de && !translations.pl) {
+    missingTranslations.pl.push(translations.de);
+  }
+}
+
+// Sortujemy alfabetycznie
+missingTranslations.pl.sort((a, b) => a.slug.localeCompare(b.slug));
+missingTranslations.de.sort((a, b) => a.slug.localeCompare(b.slug));
+---
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brakujące tłumaczenia</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #2c3e50;
+    }
+    .language-section {
+      margin-bottom: 40px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .page-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .page-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+    }
+    .page-item:last-child {
+      border-bottom: none;
+    }
+    .page-link {
+      color: #3498db;
+      text-decoration: none;
+    }
+    .page-link:hover {
+      text-decoration: underline;
+    }
+    .count {
+      font-weight: bold;
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <h1>Brakujące tłumaczenia</h1>
+  
+  <div class="language-section">
+    <h2>Brakujące tłumaczenia na niemiecki <span class="count">(Ilość: {missingTranslations.de.length})</span></h2>
+    <p>Strony dostępne tylko w języku polskim:</p>
+    <ul class="page-list">
+      {missingTranslations.de.map(page => (
+        <li class="page-item">
+          <a class="page-link" href={`/+/${page.slug}`}>{page.data.title}</a>
+          <span>Ścieżka: {page.slug}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="language-section">
+    <h2>Brakujące tłumaczenia na polski <span class="count">(Ilość: {missingTranslations.pl.length})</span></h2>
+    <p>Strony dostępne tylko w języku niemieckim:</p>
+    <ul class="page-list">
+      {missingTranslations.pl.map(page => (
+        <li class="page-item">
+          <a class="page-link" href={`/de/+/${page.slug}`}>{page.data.title}</a>
+          <span>Ścieżka: {page.slug}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</body>
+</html>

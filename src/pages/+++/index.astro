@@ -1,0 +1,43 @@
+---
+import Layout from '../../layouts/Layout.astro';
+//: ==================================================================
+import { getCollection } from 'astro:content';
+/*
+{
+  id: '00.md',
+  data: { title: 'Prof. dr hab. Karol Sauerland', lang: 'pl' },
+  body: '# Prof. dr hab. Karol Sauerland\n' +
+  filePath: 'src/content/pl/00.md',
+  digest: 'd7556a9ec2dd59bc',
+  collection: 'pl',
+  slug: '00',
+}
+*/
+//: -----------------------------------------
+const posts = await getCollection('_');
+//: -----------------------------------------
+//: console.log(posts[0]); //////////////////
+//: -----------------------------------------
+//: ==================================================================
+const title = "°";
+const description = "";
+const keywords = "";
+const lang = "pl";
+//: ==================================================================
+---
+<Layout title={title} description={description} keywords={keywords} lang={lang}>
+
+  <h1>_____+ 🦄 +_____</h1>
+  <hr>
+  <ul>
+    {posts.map(post => {
+      const filename = post.data.title || post.id;
+      //return <li><a href={`/${post.collection}/${post.slug}`}>{filename}</a></li>;
+      //:
+      //return <li><a href={`/+/${post.slug}`}>{filename}</a></li>;
+      return <li><a href={`/+/${post.id}`}>{filename}</a></li>;
+    })}
+  </ul>
+  <hr>
+
+</Layout>

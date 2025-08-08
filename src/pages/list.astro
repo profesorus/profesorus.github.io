@@ -1,0 +1,176 @@
+---
+//: ==================================================================
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getRelativeLocaleUrl as grl } from 'astro:i18n';
+// import { Debug } from 'astro:components';
+
+//: REQUIRED – getStaticPaths() @ DYNAMIC PATHS
+//: ==================================================================
+// export function getStaticPaths() {
+//   return [
+//     { params: { lang: "pl" }},
+//     { params: { lang: "de" }},
+//     // { params: { lang: "txt" }}, //: <<<<<<<<<
+//     // { params: { lang: "uni" }}, //: <<<<<<<<<
+//   ];
+// }
+
+//: LOCAL
+//: ==================================================================
+/*
+{
+  id: '00.md',
+  data: { title: 'Prof. dr hab. Karol Sauerland', lang: 'pl' },
+  body: '# Prof. dr hab. Karol Sauerland\n' +
+  filePath: 'src/content/pl/00.md',
+  digest: 'd7556a9ec2dd59bc',
+  collection: 'pl',
+  slug: '00',
+  render: [Function: render]
+}
+*/
+//: ==================================================================
+let plPosts = await getCollection('pl');
+let dePosts = await getCollection('de');
+let uniPosts = await getCollection('uni');
+let txtPosts = await getCollection('txt');
+// let ___Posts = await getCollection('___test');
+// let ___Posts = await getCollection('___test___');
+
+// plPosts = plPosts.filter(x => !x.slug.startsWith('--'));
+// dePosts = dePosts.filter(x => !x.slug.startsWith('--'));
+
+const _pl = await getCollection('pl');
+const _de = await getCollection('de');
+const _uni = await getCollection('uni');
+const _txt = await getCollection('txt');
+
+//: const postEntries = [..._pl, ..._de, ..._uni, ..._txt];
+const ___Posts = [..._pl, ..._de, ..._uni, ..._txt]
+  // .filter(x => !x.slug.startsWith('--'))
+  // .filter(x => !x.slug.startsWith('__'));
+
+/*
+/// default ---------------------------------
+  id: '00.md',
+  data: { title: 'Prof. Dr. Karol Sauerland', lang: 'de' },
+  slug: '00',
+/// via path --------------------------------
+  id: '00',
+  data: { title: 'Prof. Dr. Karol Sauerland', lang: 'de' },
+  slug: undefined
+/// -----------------------------------------
+*/
+//: SORT ------------------------------------
+// const _plPosts = (await getCollection('pl')).sort(
+//   // (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+//   (a, b) => b.id - a.id,
+// );
+//: SORT ------------------------------------
+// plPosts = sortAndInsertByKey(plPosts, [{}], '00', true)
+// let _plPosts = plPosts.sort((a, b) => a.key.localeCompare(b.key));
+//: -------------------------------
+Astro.params.lang = 'pl';
+
+const lang = Astro.url.pathname.startsWith('/de') ? 'de' : 'pl';
+
+//: ==================================================================
+const title = "Sauerland.pl - Refaktoryzacja";
+const description = "Prof. dr hab. Karol Sauerland - Germanista, literaturoznawca, \
+filozof, kierownik Zakładu Literatur Niemieckiego Obszaru Językowego w Instytucie \
+Germanistyki na Uniwersytecie Warszawskim. Katedra Filologii Germańskiej na \
+Uniwersytecie Mikłoaja Kopernika w Toruniu.";
+const keywords = "Karol Sauerand, sauerland.pl, germanista, literaturoznawca, \
+filozof, Germanist, Literaturwissenschaftler, Philosoph";
+// const lang = "pl"; // Default language for the index page
+//: ==================================================================
+---
+<style>
+h2 { margin-bottom: 5px; }
+li::marker { color: darkgray; }
+li { color: darkgray; }
+li { list-style-type: decimal-leading-zero; }
+small { vertical-align:top; font-size:50%; }
+</style>
+
+<Layout title={title} description={description} keywords={keywords} lang={lang}>
+
+  <h1>Witaj na nowej stronie sauerland.pl (Astro)</h1>
+  <hr>
+
+  <!--
+  <h2>🛍 ___test___ @ pages</h2>
+  <hr>
+  <ol>
+    {___Posts.map(post => {
+      // console.log('test', Object.entries(post)[1][1]);
+      const name = post.data.title || post.id;
+      // return <li><a href={`${post.collection}/${post.slug}`}>
+      // return <li><a href={`/${post.id}`}>{/* path */}
+      // return <li><a href={`/${post.slug}`}>
+      //   {name}</a> — {post.slug || "<undef>"}
+      //   <small>🔴</small> {post.id}
+      //   — <small>🔵</small> {post.collection}
+      // </li>;
+      // const path = (post.collection === 'uni') ? '' : '+';
+      const __lang = (post.collection === 'de') ? 'de' : 'pl';
+      const path = (post.collection === 'uni') ? ''
+        : (post.collection === 'txt') ? 'txt' : '+';
+      // const url = grl(lang, `${path}/${post.slug}`).replace(/\/$/, '');
+      const url = grl(__lang, `${path}/${post.slug}`).replace(/\/$/, '');
+      return <li><a href={url}>
+        {name}</a> — {post.slug || "<undef>"}
+        <small>🔴</small> {post.id}
+        — <small>🔵</small> {post.collection}
+      </li>;
+    })}
+  </ol>
+  -->
+
+  <h2>🦄 UNI @ main</h2>
+  <hr>
+  <ol>
+    {uniPosts.map(post => {
+      // console.log('uni_', Object.entries(post)[1][1]);
+      const name = post.data.title || post.id;
+      // return <li><a href={`${post.collection}/${post.slug}`}>
+      return <li><a href={`/${post.slug}`}>
+        {name}</a> — {post.slug} <small>🔴</small> {post.id}</li>;
+    })}
+  </ol>
+
+  <h2>🛍 TXT @ /txt/</h2>
+  <hr>
+  <ol>
+    {txtPosts.map(post => {
+      // console.log('txt_', Object.entries(post)[1][1]);
+      const name = post.data.title || post.id;
+      return <li><a href={`${post.collection}/${post.slug}`}>
+        {name}</a> — {post.slug} <small>🔴</small> {post.id}</li>;
+    })}
+  </ol>
+
+  <h2>🔘 Polski 🌀 [dir] /+/</h2>
+  <hr>
+  <ol>
+    {plPosts.map(post => {
+      // console.log('__pl', Object.entries(post)[1][1]);
+      const name = post.data.title || post.id;
+      return <li>[{post.slug}] <a href={`/+/${post.slug}`}>{name}</a>
+        — <small>🌞</small> {post.id}</li>;
+    })}
+  </ol>
+
+  <h2>🔘 Deutsch 🌀 [dir] /de/+/</h2>
+  <hr>
+  <ol>
+    {dePosts.map(post => {
+      // console.log('__de', Object.entries(post)[1][1]);
+      const name = post.data.title || post.id;
+      return <li>[{post.slug}] <a href={`/de/+/${post.slug}`}>{name}</a>
+      — <small>🌞</small> {post.id}</li>;
+    })}
+  </ol>
+
+</Layout>

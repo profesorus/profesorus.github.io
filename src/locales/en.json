@@ -1,0 +1,4 @@
+{
+  "welcome_message": "Welcome to my website!",
+  "about_text": "This is a simple example of i18n in Astro."
+}

@@ -1,0 +1,67 @@
+---
+//: ==================================================================
+import Layout from '../../../layouts/Layout.astro';
+//: ==================================================================
+//: REQUIRED: getStaticPaths() function is required for dynamic routes
+//: ==================================================================
+export async function getStaticPaths() {
+
+  // const postModules = import.meta.glob('../../../content/de/*.md');
+  // const postModules = import.meta.glob('../../../content/pl/*.md');
+  const postModules = import.meta.glob('../../../content/**/*.md');
+
+  return await Promise.all(
+    Object.entries(postModules).map(async ([filePath, module]) => {
+      const post = await module();
+
+      //: /txt/uber.mich/
+      const _url = filePath
+            //: -----------------------------
+            //: .replace('../content', '')
+            //: .replace('../../content', '')
+            .replace('../../../content', '')
+            //: -----------------------------
+            .replace('.md', '/')
+            .replace('/index', '/'); // opcjonalnie dla plików index.md
+
+      //: [ '', 'txt', 'uber.mich', '' ] -> [ 'txt', 'uber.mich' ]
+      const parts = _url.split('/').filter(Boolean); //: no empty
+      const _lang = parts[0];
+      const _slug = parts[1];
+
+      return {
+        params: {
+          lang: _lang,
+          slug: post.frontmatter.slug || _slug,
+        },
+        props: {
+          post
+        },
+      };
+    })
+  );
+}
+///////////////////////////////////
+// let xx = await getStaticPaths();
+// console.log(xx)
+///////////////////////////////////
+//: ==================================================================
+const { slug } = Astro.params;
+const { post } = Astro.props;
+const { Content } = post;
+///////////////////////////////////
+//: console.log(post);
+//: console.log(Astro.params);
+//: ==================================================================
+const title = post.frontmatter.title || post.file.split('/').pop().replace('.md', '');
+const description = "Opis strony"; // Placeholder, can be dynamic later
+const keywords = "słowa kluczowe"; // Placeholder, can be dynamic later
+const lang = Astro.params.lang; // Get lang from params
+//: ==================================================================
+---
+<Layout title={title} description={description} keywords={keywords} lang={lang}>
+
+  LANG (+) 👄👄👄 [SLUG].astro 👄 {slug} // {lang}
+
+  <Content />
+</Layout>

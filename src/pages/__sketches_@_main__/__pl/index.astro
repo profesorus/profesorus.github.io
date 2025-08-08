@@ -1,0 +1,50 @@
+---
+//: ==================================================================
+import Layout from '../../layouts/Layout.astro';
+//: ==================================================================
+import { getCollection } from 'astro:content';
+/*
+{
+  id: '00.md',
+  data: { title: 'Prof. dr hab. Karol Sauerland', lang: 'pl' },
+  filePath: 'src/content/pl/00.md',
+  digest: 'd7556a9ec2dd59bc',
+  collection: 'pl',
+  slug: '00',
+  render: [Function: render]
+}
+*/
+const plPosts = await getCollection('pl');
+// const dePosts = await getCollection('de');
+// console.log(plPosts[0]);
+// const raw = plPosts[0];
+// const use = ['id', 'data', 'filePath', 'collection', 'slug'];
+// const ___ = Object.keys(raw)
+//   .filter(key => use.includes(key))
+//   .reduce((obj, key) => {
+//     obj[key] = raw[key];
+//     return obj;
+//   }, {});
+// console.log(___);
+// let {body, digest, rendered, render, ...__} = plPosts[0];
+// console.log(__);
+// console.log(digest);
+//: ==================================================================
+const title = "---";
+const description = "";
+const keywords = "";
+const lang = "pl";
+//: ==================================================================
+---
+<Layout title={title} description={description} keywords={keywords} lang={lang}>
+
+  <h1>PL @ sauerland.pl</h1>
+  <h2>Polski</h2>
+  <ul>
+    {plPosts.map(post => {
+      const name = post.data.title || post.id;
+      return <li><a href={`/${post.collection}/${post.slug}`}>{name}</a></li>;
+    })}
+  </ul>
+
+</Layout>

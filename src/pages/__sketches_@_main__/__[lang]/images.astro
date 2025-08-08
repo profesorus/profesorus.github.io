@@ -1,0 +1,48 @@
+---
+//: ==================================================================
+import Layout from '../../layouts/Layout.astro';
+// import * as Content from '../images.md';
+// import { Content } from '../images.md';
+import { Content } from '../baden.badener.disput.html.md';
+///////import { Content } from '../../content/uni/images.md';
+// const posts = Object.values(import.meta.glob('./posts/*.md', { eager: true }));
+//: ==================================================================
+//: REQUIRED getStaticPaths() @ DYNAMIC PATHS
+//: -----------------------------------------
+export function getStaticPaths() {
+  return [
+    { params: { lang: "pl" }},
+    { params: { lang: "de" }},
+  ];
+}
+// Content.replace('<h1>', '==');
+// console.log(Content);
+// [Function (anonymous)] {
+//   isAstroComponentFactory: true,
+//   moduleId: undefined,
+//   propagation: undefined
+// }
+//: ==================================================================
+import { getEntry, getEntries, render } from 'astro:content';
+const uniPost = await getEntry('uni', 'images');
+// const author = await getEntry(uniPost, data.title);
+// const { Content, headings } = await render(uniPost);
+///const { Content } = await render(uniPost);
+// console.log(headings)
+//: ==================================================================
+// const title = "W parlamencie budapesztańskim";
+const title = "Im Budapester Parlament";
+const description = "";
+const keywords = "";
+// const lang = "de";
+const { lang } = Astro.params;
+//: ==================================================================
+---
+<Layout title={title} description={description} keywords={keywords} lang={lang}>
+
+  <h1>{title}</h1>
+  <h1>{uniPost.data.title}</h1>
+
+  <Content />
+
+</Layout>
