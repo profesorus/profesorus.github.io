@@ -104,6 +104,7 @@ ul.iconostas li {
 #content .main {
   font-size: 14px;
   margin: 50px 0;
+  overflow: hidden;
 }
 x#content .main {
   white-space: pre-wrap;
@@ -479,6 +480,7 @@ a.gray:hover {
   border-right: 1px solid #aaa; /* Linia oddzielająca z prawej */
   /* padding: 30px; -- content ma wlasny padding */
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 
