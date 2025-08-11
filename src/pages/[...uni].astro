@@ -3,7 +3,7 @@
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { getRelativeLocaleUrl as grl } from 'astro:i18n';
-import { renderMarkdown } from '../_utils/markdown.js'; // <-- IMPORTUJEMY
+import { renderMarkdown } from '../lib/markdown.js'; // <-- IMPORTUJEMY
 
 export async function getStaticPaths() {
   const uniPages = (await getCollection('uni'))

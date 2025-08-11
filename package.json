@@ -1,31 +1,39 @@
 {
   "name": "___sauerland_astro_static",
   "version": "2.0.5",
-  "description": "",
+  "description": "Revision: 2.x.x (Kalliópē) 1.2.5 (Petöfi)",
   "author": "veriKami",
   "license": "MIT",
   "main": "index.js",
+  "type": "module",
   "scripts": {
+    "prebuild": "rm -rf ./dist/*",
     "build": "astro build",
     "dev": "astro dev --force",
     "prev": "astro preview",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "w:p": "wrangler pages deploy",
+    "w:w": "wrangler deploy -c wrangler.w.jsonc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "check": "npx npm-check-updates",
+    "check:g": "npx ncu --format group"
   },
+  "packageManager": "pnpm@10.14.0",
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "pnpm@10.14.0",
   "dependencies": {
     "@astrojs/mdx": "^4.3.3",
     "@astrojs/sitemap": "^3.4.2",
     "@zade/vite-plugin-strip-html-comments": "npm:@jsr/zade__vite-plugin-strip-html-comments@^1.1.3",
     "astro": "^5.12.8",
-    "astro-i18next": "1.0.0-beta.21",
     "rehype-stringify": "^10.0.1",
     "remark-deflist": "^1.0.0",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.28.1"
   }
 }

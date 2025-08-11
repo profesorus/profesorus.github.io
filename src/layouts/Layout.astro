@@ -1,6 +1,6 @@
 ---
 import Header from '../components/Header.astro';
-import Socializer from '../components/Socializer.astro';
+// import Socializer from '../components/Socializer.astro';
 import Navigate from '../components/Navigate.astro';
 // import Navigation from '../components/Navigation.astro';
 import Menu from '../components/Menu.astro';
@@ -105,29 +105,40 @@ const print = lang === 'de'
 
   </head>
   <body>
-    <table class="main">
-      <tr>
-        <td class="left_separator"></td>
-        <td class="left">
-          <Header>
-            <Menu />
-          </Header>
-        </td>
-        <td class="right">
-          <div id="content">
-            <Socializer />
-            <Navigate />
-            <div style="clear:both;"></div>
-            <h1 class="print">{print}</h1>
-            <hr class="print" />
-            <div class="main">
-              <slot />
-            </div>
-            <Footer />
+    <button class="hamburger-button" aria-label="Open menu">
+      <span class="hamburger-icon"></span>
+    </button>
+    <div class="layout-wrapper">
+      <aside class="left-panel">
+        <Header>
+          <Menu />
+        </Header>
+      </aside>
+      <main class="right-panel">
+        <div id="content">
+          <!-- <Socializer /> -->
+          <Navigate />
+          <div style="clear:both;"></div>
+          <h1 class="print">{print}</h1>
+          <hr class="print" />
+          <div class="main">
+            <slot />
           </div>
-        </td>
-        <td class="right_separator"></td>
-      </tr>
-    </table>
+          <Footer />
+        </div>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const hamburgerButton = document.querySelector('.hamburger-button');
+        const body = document.querySelector('body');
+        if (hamburgerButton && body) {
+          hamburgerButton.addEventListener('click', () => {
+            body.classList.toggle('menu-open');
+          });
+        }
+      });
+    </script>
   </body>
 </html>

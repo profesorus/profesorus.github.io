@@ -75,22 +75,22 @@ const txt = defineCollection({
 //: ----------------------------------------------------------------------------
 //: FREE
 
-const ___test = defineCollection({
-  loader: glob({ pattern: "*.md", base: "./src/pages/___test___" }),
-  schema: z.object({
-    title: z.string().optional(),
-    // lang: z.enum(['pl', 'de']).default('pl'),
-    slug: z.string().optional(),
-  })
-});
+// const ___test = defineCollection({
+//   loader: glob({ pattern: "*.md", base: "./src/pages/___test___" }),
+//   schema: z.object({
+//     title: z.string().optional(),
+//     // lang: z.enum(['pl', 'de']).default('pl'),
+//     slug: z.string().optional(),
+//   })
+// });
 
-const ___test___ = defineCollection({
-  loader: glob({ pattern: "*.md", base: "./src/pages/___test___"}),
-  schema: z.object({
-    title: z.string().optional(),
-    slug: z.string().optional(),
-  }),
-});
+// const ___test___ = defineCollection({
+//   loader: glob({ pattern: "*.md", base: "./src/pages/___test___"}),
+//   schema: z.object({
+//     title: z.string().optional(),
+//     slug: z.string().optional(),
+//   }),
+// });
 
 // const _ = defineCollection({
 //   loader: glob({ pattern: "**/*.md", base: "./src/content/__+" }),

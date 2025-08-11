@@ -1,0 +1,14 @@
+//: PAGES -> pnpm wrangler pages deploy
+// {
+//   "name": "www-sauerland-astro",
+//   "pages_build_output_dir": "./dist/"
+// }
+
+//: WORKERS -> pnpm wrangler deploy
+{
+  "name": "sauerland-worker",
+  "compatibility_date": "2025-08-10",
+  "assets": {
+    "directory": "./dist/"
+  }
+}

@@ -35,7 +35,7 @@ import path from 'path'; //: @ vite resolve
 //: ------------------------------------------------------------------
 export default defineConfig({
   //: ------------------------------------------------------
-  site: 'http://sauerland.pl', //: required by sitemap
+  site: 'https://sauerland.pl', //: required by sitemap
   //: ------------------------------------------------------
   compressHTML: false,
   // trailingSlash: "never", //~~~~~~~
@@ -141,7 +141,7 @@ export default defineConfig({
       alias: {
         '@': path.resolve('./src')
       }
-    }
+    },
   },
   //: -----------------------------
   //: https://docs.astro.build/en/guides/troubleshooting/#adding-dependencies-to-astro-in-a-monorepo

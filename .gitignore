@@ -49,6 +49,9 @@ pnpm-debug.log*
 .vercel
 
 # ---------------------------------
+__*
 ai
+doc
+
 ___astro-develop
 ___astro-develop/kami-astro-chiri
