@@ -41,6 +41,34 @@ jobs:
       # - name: Postbuild (restore files)
       #   run: pnpm run postbuild
 
+      - name: "Add CNAME for: veriKami/www-sauerland-astro"
+        if: github.repository == 'veriKami/www-sauerland-astro'
+        run: echo "gh.sauerland.pl" > ./dist/CNAME
+
+      - name: "Remove CNAME for: profesorus/profesorus.github.io"
+        if: github.repository == 'profesorus/profesorus.github.io'
+        run: |
+          if [ -f ./dist/CNAME ]; then
+            rm ./dist/CNAME
+            echo "Usunięto CNAME dla repo: ${{ github.repository }}"
+          else
+            echo "Plik CNAME nie istnieje, pomijam."
+          fi
+
+      # - name: Delete CNAME if matches repo
+      #   if: github.repository == 'veriKami/temporary-site'
+      #   run: rm -f ./dist/CNAME
+
+      # - name: Remove CNAME for multiple repos
+      #   if: contains('veriKami/repo1 veriKami/repo2', github.repository)
+      #   run: rm -f ./dist/CNAME
+
+      # - name: Create CNAME only if not exists
+      #   run: |
+      #     if [ ! -f ./dist/CNAME ]; then
+      #       echo "www.${GITHUB_REPOSITORY#*/}.example.com" > ./dist/CNAME
+      #     fi
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
