@@ -25,7 +25,8 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install dependencies
-        run: pnpm install
+        # run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       # - name: Prebuild (copy files cache)
       #   run: pnpm run prebuild
