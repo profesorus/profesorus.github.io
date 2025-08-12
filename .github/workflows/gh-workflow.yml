@@ -45,5 +45,9 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}  # Automatycznie dostępny
-          publish_dir: ./dist  # Folder z plikami do deployu
-          branch: gh-pages     # Docelowa gałąź
+          publish_branch: gh-pages  # Docelowa gałąź
+          publish_dir: ./dist       # Folder z plikami
+          # Opcjonalne dodatkowe ustawienia:
+          # user_name: 'GitHub Actions'
+          # user_email: 'actions@github.com'
+          # commit_message: 'Deploy: gh-pages'
