@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'pnpm' # opcjonalnie: cache dla szybszych instalacji
+          # cache: 'pnpm' # opcjonalnie: cache dla szybszych instalacji
 
       - name: Install pnpm (jeśli setup-node nie wystarczy)
         run: npm install -g pnpm
