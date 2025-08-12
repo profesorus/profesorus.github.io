@@ -12,23 +12,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      # - name: Checkout repository
+      #   uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js (with pnpm)
         uses: actions/setup-node@v3
         with:
           node-version: '20'
+          cache: 'pnpm' # opcjonalnie: cache dla szybszych instalacji
+
+      - name: Install pnpm (jeśli setup-node nie wystarczy)
+        run: npm install -g pnpm
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Prebuild (copy files cache)
-        run: pnpm run prebuild
+      # - name: Prebuild (copy files cache)
+      #   run: pnpm run prebuild
 
       - name: Build Astro
         run: pnpm run build
 
-      - name: Postbuild (restore files)
-        run: pnpm run postbuild
+      # - name: Postbuild (restore files)
+      #   run: pnpm run postbuild
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
