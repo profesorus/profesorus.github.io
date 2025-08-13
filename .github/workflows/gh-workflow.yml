@@ -1,9 +1,9 @@
-name: Build and Deploy to GitHub Pages (v4)
+name: Build and Deploy (v4) GitHub Pages
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches: [ master ]
+  push:
+    branches: [ master ]
 
 permissions:
   contents: write  # Wymagane do pusha na gh-pages
@@ -34,5 +34,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}  # Automatycznie dostępny
-          publish_dir: ./dist  # Folder z plikami do deployu
-          branch: gh-pages     # Docelowa gałąź
+          publish_branch: gh-pages  # Docelowa gałąź
+          publish_dir: ./dist       # Folder z plikami

@@ -1,11 +1,10 @@
-name: Build and Deploy to GitHub Pages (v3)
+name: Build and Deploy (v3) GitHub Pages
 
 on:
+  workflow_dispatch:
   # push:
   #   branches:
   #     - master
-
-  workflow_dispatch:
 
 #: ++++++++++++++++++++++++++++++++++++++++++
 permissions:
