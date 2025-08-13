@@ -1,13 +1,14 @@
 ---
+//: Menu.astro
 //: ==================================================================
 import { getCollection } from 'astro:content';
 import { getRelativeLocaleUrl as grl } from 'astro:i18n';
-// import { getRelativeLocaleUrlList as grll } from 'astro:i18n';
 //: ==================================================================
 
 const lang = Astro.url.pathname.startsWith('/de') ? 'de' : 'pl';
 
 // 1. Predefiniowana lista kluczy (slugi w określonej kolejności)
+//: --------------------------------------------------------
 const featuredKeys = [
   '00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
   '10', '11', '12', '13', '14', '15', '16', '17', '18', '19',
@@ -19,11 +20,13 @@ const featuredKeys = [
 ];
 
 // 2. Pobieranie danych z różnych kolekcji
+//: --------------------------------------------------------
 const __de = await getCollection('de');
 const __pl = await getCollection('pl');
 const __uni = await getCollection('uni');
 
 // 2. Unifikacja tytułów
+//: --------------------------------------------------------
 __uni.forEach(item => {
   item.data.title = item.data.titl[lang];
   // console.log(item.data.title);
@@ -31,10 +34,12 @@ __uni.forEach(item => {
 });
 
 // 3. Łączenie kolekcji
+//: --------------------------------------------------------
 const __all = (lang === 'pl') ? __pl : __de;
 const allContent = [...__all, ...__uni];
 
 // 4. Tworzenie finalnej kolekcji wg kolejności z featuredKeys
+//: --------------------------------------------------------
 const featuredContent = featuredKeys.map(key => allContent
   .find(item => item.slug === key)).filter(Boolean);
 
@@ -47,6 +52,7 @@ console.log(featuredContent.map(x => ({
 //*/
 //: ==================================================================
 ---
+
 <!-- <style is:global>
   /* Unscoped, delivered as-is to the browser.
      Applies to all <h1> tags on your site. */
@@ -62,14 +68,13 @@ _small { vertical-align:top; font-size:50%; }
 pre { border: 1px solid #aaa; padding: 10px; font-size:.6em;}
 </style>
 
-<hr>
 <nav>
-  <ul>
+  <ul class="menu">
     {featuredContent.map(item => {
       const name = item.data.menu ?? item.data.title;
       const path = (item.collection === 'uni') ? '' : '+';
       const url = grl(lang, `${path}/${item.slug}`).replace(/\/$/, '');
       return <li><a href={url} set:html={name} /></li>;
     })}
-</ul>
+  </ul>
 </nav>

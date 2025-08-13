@@ -1,37 +1,22 @@
 ---
+//: Navigate.astro
 //: ==================================================================
 import { getRelativeLocaleUrl as grl } from 'astro:i18n';
+
 //: --------------------------------------------------------
-// const currentLang = Astro.url.pathname.startsWith('/de') ? 'de' : 'pl';
 // const { lang, slug } = Astro.params;
 const p = Astro.params;
-//: ============================================================================
+
+//: ==================================================================
 const currentLang = Astro.url.pathname.startsWith('/de') ? 'de' : 'pl';
 const otherLang = currentLang === 'de' ? 'pl' : 'de';
 
-// const getLangLink = (path) => {
-//   if (currentLang === 'de') {
-//     return `/de/${path}`;
-//   } else {
-//     //// return `/${path}`;
-//     return `/pl/${path}`;
-//   }
-// };
-
 const getOtherLangLink = () => {
   const currentPath = Astro.url.pathname;
-  // console.log({currentPath});
-  // { currentPath: '/pl/kontakt' }
   if (currentLang === 'de') {
-    //// return currentPath.replace(/^\/de/, '');
-    // .startsWith('/+') ? 'de' : 'pl';
-    // return currentPath.replace(/^\/de/, '/pl');
     return currentPath.replace(/^\/de/, '');
-    // Astro.url.origin
   } else {
-    //// return `/de${currentPath}`;
     return currentPath.replace(/^\//, '/de/');
-    return currentPath.replace(/^\/pl/, '/de');
   }
 };
 
@@ -50,11 +35,15 @@ const textLinks = {
 
 const contactLink = currentLang === 'de' ? '/de/kontakt' : '/kontakt';
 
-//: decoration
+//: DECORATION
+//: --------------------------------------------------------
 const textLinkLast = textLinks[currentLang].slice(-1)[0];
 const textLinkSeparator = ' | ';
-//: ============================================================================
+
+const currentFlag = currentLang === 'pl' ? '🇵🇱' : '🇩🇪';
+//: ==================================================================
 ---
+
 <div id="navigate" style="float:right;">
   <div style="margin: 10px 0 0px;">
     {textLinks[currentLang].map(link => (
@@ -68,5 +57,6 @@ const textLinkSeparator = ' | ';
     <a href={getOtherLangLink()} class={`lang ${currentLang === 'de' ? '' : 'active'}`} alt="">deutsch</a> |
     <a href={getOtherLangLink()} class={`lang ${currentLang === 'pl' ? '' : 'active'}`} alt="">polski</a>
   </div>
-  <br><small>{JSON.stringify(p)} <small>🍋</small> {currentLang}</small>
+  {/*<br><small>{JSON.stringify(p)} <small>🍋</small> {currentLang}</small>*/}
+  <small style="display:block;padding:8px 0;">{currentFlag}</small>
 </div>

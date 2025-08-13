@@ -1,36 +1,62 @@
 ---
-// Logic for image and title based on language
-
+//: Header.astro
+//: ==================================================================
 const currentLang = Astro.url.pathname.startsWith('/de') ? 'de' : 'pl';
 const profTitle = currentLang === 'de'
   ? 'Prof. Dr. Karol Sauerland'
   : 'Prof. dr hab. Karol Sauerland';
-
-const images = [
-  'bydg.doc.png',
-  'SAUERLAND_6525677_255x255px.png',
-  'SAUERLAND_H5M2904_255x400px.png',
-  'SAUERLAND_H5M3011_255x300px.png',
-  'SAUERLAND_pwm_255x340px.png'
-];
-const image = images[Math.floor(Math.random() * images.length)];
-
-// import { getCurrentLocale } from 'astro:i18n';
-// const lang = getCurrentLocale();
-// astro.debug("Props Post:", lang);
 ---
-<div id="menu">
+
+<div id="menu" _style="display:none;">
   <div id="logo">
     <a id="logo_a" href={`/${currentLang === 'de' ? 'de' : ''}`}>
-      <img id="img_logo" class="menu" src={`/img/${image}`} alt="Logo" />
     </a>
   </div>
   <h1 class="menu">{profTitle}</h1>
-  <slot /> {/* This slot will be for the Navigation component */}
+  <slot />
 </div>
 
-<!-- <header>
-  {lang === 'pl' ? 'Witaj' : 'Welcome'}
-  <img src="/images/logo.png" />
-</header>
- -->
+<script is:inline>
+  const images = [
+    'bydg.doc.png',
+    'SAUERLAND_6525677_255x255px.png',
+    'SAUERLAND_H5M2904_255x400px.png',
+    'SAUERLAND_H5M3011_255x300px.png',
+    'SAUERLAND_pwm_255x340px.png'
+  ];
+  const randomImage = images[Math.floor(Math.random() * images.length)];
+  // document.getElementById('img_logo').src = `/img/${randomImage}`;
+
+  const el = document.getElementById('logo_a');
+  const img = document.createElement("img");
+  img.src = "/img/" + randomImage;
+  img.id = "img_logo";
+  img.class = "menu";
+  el.appendChild(img);
+
+  // document.getElementById('menu').style.display = 'block';
+  // setTimeout(() => document.getElementById('menu').style.display = 'block',33);
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   document.getElementById('menu').style.display = 'block';
+  // });
+
+  let delay = 55;
+
+  document.querySelectorAll(['#logo', 'h1.menu', 'ul.menu'])
+    .forEach(el => {el.style.display = 'none';});
+
+  document.querySelectorAll(['#logo', 'h1.menu', 'ul.menu'])
+    .forEach(el => {
+      delay += 222;
+      setTimeout(() => {
+        el.style.display = '';
+        // if (typeof Element.prototype.animate !== 'function') {
+        if (typeof Element.prototype.animate === 'function') {
+          el.animate([{ opacity: 0 }, { opacity: 1 }],
+            { duration: 400, easing: 'ease-in' });
+        } else {
+          el.style.opacity = '1';
+        }
+      }, delay);
+  });
+</script>
