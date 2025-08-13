@@ -51,6 +51,7 @@ pnpm-debug.log*
 # ---------------------------------
 #: LOCAL
 
+.wrangler
 .cache
 .temp
 
