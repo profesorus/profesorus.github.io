@@ -49,6 +49,11 @@ pnpm-debug.log*
 .vercel
 
 # ---------------------------------
+#: LOCAL
+
+.cache
+.temp
+
 __*
 ai
 doc
