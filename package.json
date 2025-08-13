@@ -20,6 +20,8 @@
     "w:p": "wrangler pages deploy",
     "w:w": "wrangler deploy -c wrangler.w.jsonc",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "gce:c": "git commit --allow-empty -m \"👄 Trigger workflow\"",
+    "gce": "pnpm gce:c && git push origin master",
     "check": "npx npm-check-updates",
     "check:g": "npx ncu --format group"
   },

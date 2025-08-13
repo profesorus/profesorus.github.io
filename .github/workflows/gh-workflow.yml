@@ -30,6 +30,14 @@ jobs:
       - name: Build (przykład dla np. Astro/Vite/Next.js)
         run: pnpm run build
 
+      - name: "Add CNAME for: veriKami/www-sauerland-astro"
+        if: github.repository == 'veriKami/www-sauerland-astro'
+        run: echo -e "gh.sauerland.pl\n" > ./dist/CNAME
+
+      - name: "Remove CNAME for: profesorus/profesorus.github.io"
+        if: github.repository == 'profesorus/profesorus.github.io'
+        run: rm -f ./dist/CNAME
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
