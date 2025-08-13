@@ -9,9 +9,13 @@ languages:
   - de
 slug: "images"
 ---
-<!--
+<!--[:pl]-->
 # W parlamencie budapesztańskim
--->
+<!--[/pl]-->
+<!--[:de]-->
+# Im Budapester Parlament
+<!--[/de]-->
+
 ![](/img/budapest/KS-Podium1.jpg)
 ![](/img/budapest/KS-Podium2.jpg)
 ![](/img/budapest/KS-Podium3.jpg)

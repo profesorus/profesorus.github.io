@@ -9,6 +9,12 @@ languages:
   - de
 slug: "video"
 ---
+<!--[:pl]-->
+# Nagrania audio i wideo
+<!--[/pl]-->
+<!--[:de]-->
+# Audio- und Videoaufzeichnungen
+<!--[/de]-->
 
 <h2>8. Hohenschönhausen-Forum<br>
     – Hohenschönhausen-Rede Karol Sauerland</h2>

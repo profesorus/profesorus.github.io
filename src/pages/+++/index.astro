@@ -14,7 +14,7 @@ import { getCollection } from 'astro:content';
 }
 */
 //: -----------------------------------------
-const posts = await getCollection('_');
+const posts = await getCollection('uni');
 //: -----------------------------------------
 //: console.log(posts[0]); //////////////////
 //: -----------------------------------------
@@ -35,7 +35,7 @@ const lang = "pl";
       //return <li><a href={`/${post.collection}/${post.slug}`}>{filename}</a></li>;
       //:
       //return <li><a href={`/+/${post.slug}`}>{filename}</a></li>;
-      return <li><a href={`/+/${post.id}`}>{filename}</a></li>;
+      return <li><a href={`/+++/${post.id}`}>{filename}</a></li>;
     })}
   </ul>
   <hr>

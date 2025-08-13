@@ -1,0 +1,85 @@
+---
+//: ============================================================================
+import Layout from '../layouts/Layout.astro';
+import path from 'node:path';
+import fs from 'node:fs';
+
+const lang = Astro.url.pathname.startsWith('/de') ? 'de' : 'pl';
+
+//: SIMPLE (one level)
+//: --------------------------------------------------------
+// function getFilesList() {
+//   const dir = path.resolve('public/files');
+//   return fs.readdirSync(dir)
+//     .filter(f => f.endsWith('.pdf'))
+//     .map(f => `/files/${f}`);
+// }
+// const files = getFilesList();
+
+//: FULL (recurent)
+//: --------------------------------------------------------
+
+const filesDir = path.resolve('public/files');
+
+function getFiles(dir, baseUrl = "/files") {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+  let result = [];
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    const urlPath = path.join(baseUrl, entry.name).replace(/\\/g, "/");
+
+    if (entry.isDirectory()) {
+      result = result.concat(getFiles(fullPath, urlPath)); // rekurencja
+    } else if (entry.name.toLowerCase().endsWith(".pdf")) {
+      // result.push({ name: entry.name, url: urlPath });
+      const name = entry.name; //.replace(/^SAUERLAND__/i, '');
+      result.push({ name, url: urlPath });
+    }
+  }
+
+  return result;
+}
+
+const fileList = getFiles(filesDir)
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+//: --------------------------------------------------------
+---
+
+<style is:global>
+  hr.red {
+    margin: 40px 0;
+    border-bottom: solid red 1px;
+  }
+</style>
+
+<Layout>
+
+  <h1>{lang === 'de' ? 'Liste der PDF-Dateien' : 'Lista plików PDF'}</h1>
+  <hr style="margin: 10px 0 40px 0;">
+  <ol>
+    {fileList.map(file => (
+      <li><a href={file.url} target="_blank">{file.name}</a></li>
+      <>{}</>
+    ))}
+  </ol>
+
+  {/*
+  <ul>
+    {files.map(file => (
+      <li><a href={file} target="_blank">{file}</a></li>
+      <>{\n}</>
+    ))}
+  </ul>
+  <hr class="red">
+  */}
+
+  {/*
+  <ol>
+    <Fragment set:html={fx} />
+  </ol>
+  */}
+
+</Layout>

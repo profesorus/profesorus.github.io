@@ -9,6 +9,12 @@ languages:
   - de
 slug: "baden.badener.disput"
 ---
+<!--[:pl]-->
+# Baden-Badener Disput
+<!--[/pl]-->
+<!--[:de]-->
+# Baden-Badener Disput
+<!--[/de]-->
 
 <h2>° (11) Baden-Badener Disput<br>
 ° Brauchen wir eine neue Mauer? (1991)</h2>

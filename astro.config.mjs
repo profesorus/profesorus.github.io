@@ -14,9 +14,54 @@ import remarkLangBlockFrontmatter from './src/plugins/remark-lang-block-fm.mjs';
 //: import { stripHTMLComments } from "@zade/vite-plugin-strip-html-comments";
 import { stripHTMLComments } from "./src/plugins/strip-html-comments/plugin.ts";
 
-import path from 'path'; //: @ vite resolve
+import path from 'node:path'; //: @ vite resolve
 
-// Ręczna transformacja (sketch)
+//: -----------------------------------------
+// import { fileURLToPath } from 'node:url';
+// import fs from 'fs-extra';
+//: -----------------------------------------
+// function filesPdfHandler() {
+//   return {
+//     name: 'files-pdf-handler',
+//     hooks: {
+//       // Po buildzie kopiujemy PDF-y
+//       'astro:build:done': async ({ dir }) => {
+//         const outDir = fileURLToPath(dir);
+//         const src = path.resolve('public/files');
+//         const dest = path.join(outDir, 'files');
+//         if (fs.existsSync(src)) {
+//           const files = (await fs.readdir(src)).filter(f => f.endsWith('.pdf'));
+//           console.log(`📑 PDF-y znalezione w public/files:`);
+//           files.forEach(f => console.log(`  - ${f}`));
+//           // await fs.copy(src, dest, { overwrite: true });
+//           console.log(`✅ Skopiowano PDF-y z ${src} → ${dest}`);
+//         } else {
+//           console.warn(`⚠️ Brak katalogu ${src} — pomijam kopiowanie.`);
+//         }
+//       }
+//     },
+//   };
+// }
+//: -----------------------------------------
+// function preservePdfFiles() {
+//   return {
+//     name: 'preserve-pdf-files',
+//     hooks: {
+//       'astro:build:done': async ({ dir }) => {
+//         const src = path.resolve('public/files');
+//         const dest = path.resolve(dir, 'files');
+//         if (fs.existsSync(src)) {
+//           await fs.copy(src, dest, { overwrite: true });
+//           console.log(`📄 Skopiowano PDF-y z ${src} → ${dest}`);
+//         } else {
+//           console.warn(`⚠️ Brak katalogu ${src} — pomijam kopiowanie.`);
+//         }
+//       }
+//     }
+//   };
+// }
+
+// Ręczna transformacja (sketch) vite
 //: -----------------------------------------
 // import { promises as fs } from 'fs';
 // import path from 'path';
@@ -43,20 +88,19 @@ export default defineConfig({
   build: {
     //: Generate `page.html` instead of `page/index.html`
     // format: 'file', //~~~~~~~~~~~~~
-    assets: '__',
-    inlineStylesheets: 'never',
-    // inlineStylesheets: 'always',
+    assets: '__a__', //: default: _astro
+    // inlineStylesheets: 'never',
+    inlineStylesheets: 'always',
   },
-  // publicDir: './my-custom-publicDir-directory',
+  // publicDir: './my-publicDir',
   //: -----------------------------
   //: https://docs.astro.build/en/guides/integrations-guide/mdx/
   //: https://docs.astro.build/en/guides/integrations-guide/sitemap/
-  //: integrations: [mdx()],
   //: -----------------------------
-  // integrations: [mdx(), sitemap()],
   integrations: [
     mdx(),
     stripHTMLComments(),
+    // filesPdfHandler(),
     sitemap({
       // filenameBase: 'sauerland-sitemap',
       // lastmod: new Date(),
@@ -80,6 +124,10 @@ export default defineConfig({
         }
         return item;
       },
+      // customPages: [
+      //   'https://xexample.com/my.pdf', // <-- File from `public/`
+      //   'https://xexample.com/my_french.pdf', // <-- File from `public/`
+      // ],
     }),
   ],
   //: -----------------------------
@@ -119,7 +167,19 @@ export default defineConfig({
     //: -------------------------------------
     // "/blog/[...slug]": "/articles/[...slug]",
     // "/old-page": "/new-page",
-    // "/blog": "https://example.com/blog"
+    // "/blog": "https://example.com/blog",
+    //: -------------------------------------
+    "/files/2020": "/files",
+    "/files/2024": "/files",
+    "/de/files": "/files",
+  },
+  //: -----------------------------
+  vite: {
+    resolve: {
+      alias: {
+        '@': path.resolve('./src')
+      }
+    },
   },
   //: -----------------------------
   // vite: {
@@ -135,14 +195,6 @@ export default defineConfig({
   //     }
   // }]
   // },
-  //: -----------------------------
-  vite: {
-    resolve: {
-      alias: {
-        '@': path.resolve('./src')
-      }
-    },
-  },
   //: -----------------------------
   //: https://docs.astro.build/en/guides/troubleshooting/#adding-dependencies-to-astro-in-a-monorepo
   //: Adding dependencies to Astro in a monorepo
